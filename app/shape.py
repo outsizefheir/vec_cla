@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
-from matplotlib.patches import Circle as MplCircle, Polygon as MplPolygon
+from matplotlib.patches import Circle as MplCircle, Polygon as MplPolygon, Ellipse as MplEllipse
 
 class Shape(ABC):
     @abstractmethod
@@ -203,7 +203,7 @@ class Polygon(Shape):
         return {'vertices': points}
             
     def get_help() -> str:
-        return 'x1 y1 x2 y2 x3 y3 ... (минимум 3 точки'
+        return 'x1 y1 x2 y2 x3 y3 ... (минимум 3 точки)'
 
     def draw(self, ax: plt.Axes, color: str = 'green') -> None:
         coordinates = [(p.x, p.y) for p in self.vertices]
@@ -219,3 +219,53 @@ class Polygon(Shape):
     def __repr__(self):
         return f'Polygon (vertices={self.vertices})'
 
+class Oval(Shape):
+    def __init__(self, center: Point, width: float, height: float):
+        if width <= 0 or height <= 0:
+            raise ValueError("Ширина и высота должны быть больше нуля")
+        self.center = center
+        self.width = width
+        self.height = height
+
+    def to_dict(self) -> dict[str, any]:
+        return {
+            'type': 'oval',
+            'center': self.center.to_dict(),
+            'width': self.width,
+            'height': self.height
+        }
+    
+    @classmethod
+    def from_dict(cls, data: dict[str, any]) -> Oval:
+        return cls(
+            center=Point.from_dict(data['center']),
+            width=data['width'],
+            height=data['height']
+        )
+
+    @staticmethod
+    def parse_args(args: list[str]) -> dict[str, any]:
+        if len(args) != 4:
+            raise ValueError("Нужно 4 параметра: center_x center_y width height")
+        return {
+            'center': Point(float(args[0]), float(args[1])),
+            'width': float(args[2]),
+            'height': float(args[3])
+        }
+    
+    @staticmethod
+    def get_help() -> str:
+        return "center_x center_y width height"
+
+    def draw(self, ax: plt.Axes):
+        patch = MplEllipse(
+            (self.center.x, self.center.y),
+            width=self.width,
+            height=self.height,
+            fill=False,
+            label=f'{self.__repr__()}'
+        )
+        ax.add_patch(patch)
+
+    def __repr__(self):
+        return f"Oval(center={self.center}, width={self.width}, height={self.height})"
