@@ -170,7 +170,6 @@ class Polygon(Shape):
         return {
             'type': 'polygon',
             'vertices': [v.to_dict() for v in self.vertices],
-            'name': self.name
         }
     
     @classmethod
