@@ -210,7 +210,6 @@ class Polygon(Shape):
             coordinates,
             closed=True,
             fill=False,
-            edgecolor=color,
             label = f'{self.__repr__}'
         )
         ax.add_patch(patch)
@@ -268,3 +267,115 @@ class Oval(Shape):
 
     def __repr__(self):
         return f"Oval(center={self.center}, width={self.width}, height={self.height})"
+
+class Square(Shape):
+    def __init__(self, center: Point, side: float):
+        if side <= 0:
+            raise ValueError("Длина стороны должна быть положительной")
+        self.center = center
+        self.side = side
+
+    def to_dict(self) -> dict:
+        return {
+            'type': 'square',
+            'center': self.center.to_dict(),
+            'side': self.side
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'Square':
+        return cls(
+            center=Point.from_dict(data['center']),
+            side=data['side']
+        )
+
+    @staticmethod
+    def parse_args(args: list[str]) -> dict:
+        if len(args) != 3:
+            raise ValueError("Нужно 3 параметра: center_x center_y side")
+        return {
+            'center': Point(float(args[0]), float(args[1])),
+            'side': float(args[2])
+        }
+
+    @staticmethod
+    def get_help() -> str:
+        return "center_x center_y side_length"
+
+    def draw(self, ax: plt.Axes):
+        half = self.side / 2
+        vertices = [
+            (self.center.x - half, self.center.y - half),
+            (self.center.x + half, self.center.y - half),
+            (self.center.x + half, self.center.y + half),
+            (self.center.x - half, self.center.y + half)
+        ]
+        patch = MplPolygon(
+            vertices,
+            closed=True,
+            fill=False,
+            edgecolor='red',
+            label = f'{self.__repr__}'
+        )
+        ax.add_patch(patch)
+
+    def __repr__(self):
+        return f"Square (center={self.center}, side={self.side})"
+
+class Rhombus(Shape):
+    def __init__(self, center: Point, width: float, height: float):
+        if width <= 0 or height <= 0:
+            raise ValueError("Ширина и высота должны быть положительными")
+        self.center = center
+        self.width = width
+        self.height = height
+
+    def to_dict(self) -> dict:
+        return {
+            'type': 'rhombus',
+            'center': self.center.to_dict(),
+            'width': self.width,
+            'height': self.height
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'Rhombus':
+        return cls(
+            center=Point.from_dict(data['center']),
+            width=data['width'],
+            height=data['height']
+        )
+
+    @staticmethod
+    def parse_args(args: list[str]) -> dict:
+        if len(args) != 4:
+            raise ValueError("Нужно 4 параметра: center_x center_y width height")
+        return {
+            'center': Point(float(args[0]), float(args[1])),
+            'width': float(args[2]),
+            'height': float(args[3])
+        }
+
+    @staticmethod
+    def get_help() -> str:
+        return "center_x center_y width height"
+
+    def draw(self, ax: plt.Axes):
+        vertices = [
+            (self.center.x, self.center.y + self.height/2),
+            (self.center.x + self.width/2, self.center.y),
+            (self.center.x, self.center.y - self.height/2),
+            (self.center.x - self.width/2, self.center.y)
+        ]
+        patch = MplPolygon(
+            vertices,
+            closed=True,
+            fill=False,
+            edgecolor='red',
+            label = f'{self.__repr__}'
+        )
+        ax.add_patch(patch)
+
+    def __repr__(self):
+        return f"Rhombus (center={self.center}, width={self.width}, height={self.height})"
+    

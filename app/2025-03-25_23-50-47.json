@@ -1,0 +1,21 @@
+[
+  {
+    "type": "square",
+    "center": {
+      "type": "point",
+      "x": 5.0,
+      "y": 5.0
+    },
+    "side": 10.0
+  },
+  {
+    "type": "rhombus",
+    "center": {
+      "type": "point",
+      "x": 5.0,
+      "y": 5.0
+    },
+    "width": 8.0,
+    "height": 6.0
+  }
+]
